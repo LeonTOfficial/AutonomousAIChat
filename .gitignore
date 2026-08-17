@@ -1,0 +1,12 @@
+.DS_Store
+.build/
+.swiftpm/
+.app-build/
+DerivedData/
+*.dmg
+*.xcarchive
+*.xcresult
+sessions-v13.json
+sessions-v13.pre-v18.json
+long-term-memory.txt
+*.log

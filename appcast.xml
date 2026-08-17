@@ -1,0 +1,34 @@
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Autonomer KI-Gruppenchat</title>
+        <item>
+            <title>18.1.0</title>
+            <pubDate>Mon, 17 Aug 2026 14:01:16 +0200</pubDate>
+            <link>https://github.com/LeonTOfficial/AutonomousAIChat</link>
+            <sparkle:version>22</sparkle:version>
+            <sparkle:shortVersionString>18.1.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <sparkle:hardwareRequirements>arm64</sparkle:hardwareRequirements>
+            <description sparkle:format="markdown"><![CDATA[# AutonomousAIChat v18.1.0
+
+Dies ist die erste Ausgabe mit integrierten, signierten Sparkle-Updates. Sie muss einmalig über die DMG installiert werden; spätere Versionen können direkt in der App aktualisiert werden.
+
+## Neu und verbessert
+
+- Zwei auswählbare Design-Modi: das unveränderte bisherige Design und „Transparent Glass“ mit 0–100 % Hintergrunddeckkraft, konfigurierbarem Blur, Live-Vorschau und Reset.
+- Native Tabellen und Swift-Charts statt Pipe- beziehungsweise Code-Rohtext.
+- Toleranter Colored Text Parser 2.0 für Farben, Markierungen und fehlerhafte Tags.
+- Streng belegte Webrecherche mit Quellenmarkern direkt an Aussagen.
+- Stabilere Qwen- und Gemini-Antwortpipeline mit Abbruch, Zeitlimits und kontrolliertem Streaming.
+- Kompakte inhaltsbreite Chat-Bubbles ohne leere Fußzeile.
+- Sparkle 2.9.2, neues App-Icon und reproduzierbare DMG-/ZIP-Paketierung.
+
+## Hinweis zur Installation
+
+Das derzeitige öffentliche Bundle ist ad-hoc signiert und nicht Apple-notarisiert. macOS kann bei der ersten Installation deshalb eine Sicherheitsrückfrage anzeigen. Die Sparkle-Updatearchive selbst werden zusätzlich mit EdDSA signiert.
+]]></description>
+            <enclosure url="https://github.com/LeonTOfficial/AutonomousAIChat/releases/download/v18.1.0/AutonomousAIChat-v18.1.0-update.zip" length="4739164" type="application/octet-stream" sparkle:edSignature="Tb9H9Vk+I3M3R7Yl0ozmXk3KyhGqRb3PcdjjY4zcO087THka15WklYmypkWP9u2XhNer6MKhlUU8ZcgA507wDQ=="/>
+        </item>
+    </channel>
+</rss>
