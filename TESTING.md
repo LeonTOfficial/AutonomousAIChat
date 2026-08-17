@@ -1,4 +1,4 @@
-# Testing v18.1.0
+# Testing v18.1.1
 
 ## Automatisierte Prüfung
 
@@ -28,6 +28,7 @@ Abgedeckte Fälle:
 - Sparkle-Feed verwendet HTTPS und der eingebettete Ed25519-Public-Key ist exakt 32 Byte lang
 - „Aktuelles Design“ bleibt Standard und die Modusauswahl wird dauerhaft gespeichert
 - Transparent-Glass-Reset sowie sichere Grenzwerte für Deckkraft und Blur
+- der leere KI-Chat blendet nur in Transparent Glass die Startkarte aus
 
 ## Manuelle Live-Abnahme
 
@@ -57,11 +58,12 @@ Abgedeckte Fälle:
 24. Transparent Glass mit Hintergrunddeckkraft 0 % und Blur 0 auf beiden Displays prüfen; Bubble, Eingabe, Fehlerkarte, Tabelle und Chart müssen lesbar bleiben.
 25. Transparent Glass zurücksetzen und danach zu „Aktuelles Design“ wechseln; das bisherige Erscheinungsbild muss exakt wiederhergestellt werden.
 26. macOS „Transparenz reduzieren“ und „Bewegung reduzieren“ aktivieren und den soliden, ruhigen Fallback ohne dauerhafte Animation prüfen.
+27. In Transparent Glass einen leeren KI-Chat öffnen: keine Startkarte und kein erklärender Text; Header und Eingabebereich bleiben transparent, während Plus-, Personen- und Senden-Schaltflächen als Liquid Glass erkennbar sind.
 
 ## Veröffentlichung
 
 - Keine Schlüssel, Sitzungsdaten, Logs, `.build`- oder `.app-build`-Ordner in der ZIP.
-- `Info.plist` meldet v18.1.0 (Build 22) und enthält `SUFeedURL`, `SUPublicEDKey` sowie das tägliche Prüfintervall.
+- `Info.plist` meldet v18.1.1 (Build 23) und enthält `SUFeedURL`, `SUPublicEDKey` sowie das tägliche Prüfintervall.
 - `Info.plist` referenziert `AppIcon.icns`, das im App-Bundle vorhanden ist.
 - `Sparkle.framework`, Updater, Downloader und Installer liegen im App-Bundle und bestehen `codesign --verify --deep --strict`.
 - Das Update-Archiv wird erst nach menschlich kontrollierter EdDSA-Signatur in einen Appcast aufgenommen.

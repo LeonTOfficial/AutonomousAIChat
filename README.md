@@ -1,4 +1,4 @@
-# AutonomousAIChat v18.1.0
+# AutonomousAIChat v18.1.1
 
 Native macOS-SwiftUI-App mit zwei getrennten Modi:
 
@@ -19,11 +19,12 @@ Native macOS-SwiftUI-App mit zwei getrennten Modi:
 - **Sichere Migration:** bestehende `sessions-v13.json` bleiben lesbar; vor dem ersten v18-Schreiben wird einmalig `sessions-v13.pre-v18.json` angelegt.
 - **Stabilitätsfix 18.0.1:** Qwen-Denkmodus blockiert die sichtbare Antwort nicht mehr; Chat-Bubbles passen sich wieder dem Inhalt an und eine dauerhaft laufende SwiftUI-Animationsschleife wurde entfernt.
 - **Resilienzfix 18.0.2:** Abgebrochene Antworten hinterlassen keinen blockierenden Zustand mehr; Streaming und Scrollen werden gedrosselt, Rich-Inhalte gecacht und lokale Modellanfragen erhalten klare Zeit- und Kontextgrenzen. Unvollständige JSON-Hüllen gelangen nicht mehr in die Bubble; dynamische Nachrichten verwenden eine stabile Liquid-Glass-nahe Materialfläche.
-- **Sparkle-Updates 18.1.0:** Die App enthält Sparkle 2.9.2, prüft einmal täglich auf signierte Updates und bietet „Nach Updates suchen …“ im App-Menü sowie in den Einstellungen. Das geprüfte Framework wird lokal mitgeliefert, damit der Build nicht von einem erneuten Download abhängt.
+- **Sparkle-Updates:** Seit v18.1.0 enthält die App Sparkle 2.9.2, prüft einmal täglich auf signierte Updates und bietet „Nach Updates suchen …“ im App-Menü sowie in den Einstellungen. Das geprüfte Framework wird lokal mitgeliefert, damit der Build nicht von einem erneuten Download abhängt.
 - **Eigene App-Identität:** Ein neues Liquid-Glass-Chat-Icon ersetzt das generische macOS-Programmsymbol.
 - **Zwei getrennte Designs:** „Aktuelles Design“ bewahrt das bisherige Erscheinungsbild unverändert. „Transparent Glass“ besitzt eigene dauerhaft gespeicherte Regler für 0–100 % Hintergrunddeckkraft und 0–24 Blur, eine Live-Vorschau und einen separaten Reset.
 - **Barrierefreies Glas:** Bei „Transparenz reduzieren“ verwendet Transparent Glass automatisch solide lesbare Flächen; „Bewegung reduzieren“ deaktiviert optionale UI-Animationen. Tabellen, Charts, Fehlerkarten und Eingabe bleiben auch bei 0 % Fensterhintergrund lesbar.
-- **Version:** v18.1.0 (Build 22).
+- **Transparent-Glass-Polish 18.1.1:** Der leere KI-Chat zeigt keine unnötige Startkarte mehr. Header und Eingabe-Chrome sind im zweiten Design wirklich transparent; nur interaktive Schaltflächen behalten eine klar erkennbare Liquid-Glass-Fläche. Ein kontrastierender Texthalo erhält die Lesbarkeit ohne deckenden Hintergrund.
+- **Version:** v18.1.1 (Build 23).
 
 ## Automatische Updates
 

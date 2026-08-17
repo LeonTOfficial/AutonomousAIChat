@@ -128,6 +128,28 @@ extension View {
             enabled: enabled
         ))
     }
+
+    func transparentGlassContrastHalo(enabled: Bool = true) -> some View {
+        modifier(TransparentGlassContrastModifier(enabled: enabled))
+    }
+}
+
+private struct TransparentGlassContrastModifier: ViewModifier {
+    @Environment(\.transparentGlassModeEnabled) private var transparentGlassModeEnabled
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+
+    let enabled: Bool
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if transparentGlassModeEnabled && enabled && !reduceTransparency {
+            content
+                .shadow(color: .white.opacity(0.72), radius: 1.8)
+                .shadow(color: .black.opacity(0.24), radius: 0.7)
+        } else {
+            content
+        }
+    }
 }
 
 private struct TransparentGlassReadabilityModifier: ViewModifier {

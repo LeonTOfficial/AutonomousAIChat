@@ -2,16 +2,16 @@
 
 ## Aktueller Stand
 
-AutonomousAIChat v18.1.0 enthält Sparkle 2.9.2, den öffentlichen EdDSA-Schlüssel und den vorgesehenen HTTPS-Feed. Diese erste Sparkle-fähige Version muss noch einmal per DMG installiert werden. Für spätere Updates kann die App den Download selbst übernehmen.
+AutonomousAIChat v18.1.1 enthält Sparkle 2.9.2, den öffentlichen EdDSA-Schlüssel und den vorgesehenen HTTPS-Feed. Wer bereits v18.1.0 installiert hat, kann v18.1.1 direkt über Sparkle laden. Ältere Versionen ohne Updater benötigen einmalig die neue DMG.
 
 Der Feed zeigt auf:
 
 `https://raw.githubusercontent.com/LeonTOfficial/AutonomousAIChat/main/appcast.xml`
 
-Repository, Appcast und v18.1.0-Release sind öffentlich unter:
+Repository, Appcast und Releases sind öffentlich unter:
 
 - `https://github.com/LeonTOfficial/AutonomousAIChat`
-- `https://github.com/LeonTOfficial/AutonomousAIChat/releases/tag/v18.1.0`
+- `https://github.com/LeonTOfficial/AutonomousAIChat/releases/tag/v18.1.1`
 
 Der Appcast wurde mit Sparkles offiziellem Werkzeug erzeugt. Öffentlicher Schlüssel, Archivlänge, Version, Download-URL und EdDSA-Signatur wurden vor und nach der Veröffentlichung geprüft.
 
@@ -21,7 +21,7 @@ Der Appcast wurde mit Sparkles offiziellem Werkzeug erzeugt. Öffentlicher Schl�
 - Private Schlüssel, API-Keys, Sitzungsdaten, Diagnose-Logs und Build-Caches dürfen nie in Repository, ZIP, DMG oder Appcast gelangen.
 - Release-Artefakte werden erst veröffentlicht, nachdem App-Bundle, Signatur, Archiv und Appcast lokal geprüft wurden.
 - Das Sparkle-Archiv wird mit `generate_appcast` beziehungsweise `sign_update` aus der offiziellen Sparkle-Distribution signiert. Die Signatur wird nicht von Hand erfunden oder kopiert.
-- Veröffentlichung, Git-Push, Tag oder GitHub-Release erfolgen nur nach ausdrücklicher Freigabe des Besitzers. Für v18.1.0 wurde diese Freigabe erteilt.
+- Veröffentlichung, Git-Push, Tag oder GitHub-Release erfolgen nur nach ausdrücklicher Freigabe des Besitzers. Für v18.1.0 und v18.1.1 wurde diese Freigabe erteilt.
 
 ## Lokale Vorbereitung
 
@@ -31,8 +31,8 @@ Der Appcast wurde mit Sparkles offiziellem Werkzeug erzeugt. Öffentlicher Schl�
 
 Das erzeugt im übergeordneten `outputs`-Ordner:
 
-- `AutonomousAIChat-v18.1.0.dmg` für die einmalige manuelle Installation
-- `AutonomousAIChat-v18.1.0-update.zip` als späteres Sparkle-Enclosure
+- `AutonomousAIChat-v18.1.1.dmg` für die einmalige manuelle Installation
+- `AutonomousAIChat-v18.1.1-update.zip` als Sparkle-Enclosure
 - `AutonomousAIChat-v18.zip` als uploadbare Quellkopie ohne Build-Caches
 
 Danach müssen mindestens folgende Prüfungen erfolgreich sein:
@@ -41,8 +41,8 @@ Danach müssen mindestens folgende Prüfungen erfolgreich sein:
 swift test
 swift build -c release
 codesign --verify --deep --strict --verbose=2 "${TMPDIR%/}/AutonomousAIChat-v18-app-build/Autonomer KI-Gruppenchat.app"
-hdiutil verify "../../outputs/AutonomousAIChat-v18.1.0.dmg"
-unzip -tq "../../outputs/AutonomousAIChat-v18.1.0-update.zip"
+hdiutil verify "../../outputs/AutonomousAIChat-v18.1.1.dmg"
+unzip -tq "../../outputs/AutonomousAIChat-v18.1.1-update.zip"
 ```
 
 ## Veröffentlichung eines Folgeupdates

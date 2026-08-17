@@ -300,6 +300,12 @@ enum DesignDefaults {
     }
 }
 
+enum EmptyConversationPolicy {
+    static func shouldShowPlaceholder(chatMode: ChatMode, designMode: AppDesignMode) -> Bool {
+        !(chatMode == .single && designMode == .transparentGlass)
+    }
+}
+
 @MainActor
 final class Preferences: ObservableObject {
     private enum Keys {

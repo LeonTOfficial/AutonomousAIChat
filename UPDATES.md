@@ -1,5 +1,13 @@
 # Updates
 
+## v18.1.1 (Build 23)
+
+- leere Startkarte samt überflüssigem Erklärungstext im Transparent-Glass-KI-Chat entfernt
+- Header und Eingabebereich im zweiten Design ohne deckende Materialfläche dargestellt
+- Liquid-Glass-Flächen auf interaktive Schaltflächen konzentriert und Textkontrast ohne undurchsichtigen Hintergrund abgesichert
+- Live-Vorschau um den tatsächlich transparenten Eingabebereich ergänzt
+- aktuelles Design und Gruppen-Startansicht unverändert bewahrt
+
 ## v18.1.0 (Build 22)
 
 - offizielles Sparkle 2.9.2 als lokal geprüftes XCFramework integriert

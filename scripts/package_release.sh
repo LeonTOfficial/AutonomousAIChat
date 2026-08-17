@@ -4,7 +4,7 @@ set -euo pipefail
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 OUTPUT_DIR="$(cd "$PROJECT_DIR/../.." && pwd)/outputs"
 APP_NAME="Autonomer KI-Gruppenchat"
-VERSION="18.1.0"
+VERSION="18.1.1"
 APP_PATH="${TMPDIR%/}/AutonomousAIChat-v18-app-build/$APP_NAME.app"
 DMG_PATH="$OUTPUT_DIR/AutonomousAIChat-v$VERSION.dmg"
 UPDATE_ZIP_PATH="$OUTPUT_DIR/AutonomousAIChat-v$VERSION-update.zip"
@@ -44,6 +44,7 @@ ditto -c -k --sequesterRsrc --keepParent "$CLEAN_APP_PATH" "$UPDATE_ZIP_PATH"
 
 mkdir -p "$STAGING_DIR/source/AutonomousAIChat-v18"
 rsync -a \
+  --exclude '.git' \
   --exclude '.build' \
   --exclude '.app-build' \
   --exclude '.swiftpm' \

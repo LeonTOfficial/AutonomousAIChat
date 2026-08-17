@@ -1,7 +1,7 @@
 # AutonomousAIChat v18 – Master-Brief
 
 Stand: 17. August 2026  
-Version: 18.1.0 (Build 22)  
+Version: 18.1.1 (Build 23)
 Projekt: native macOS-App mit SwiftUI, Swift Charts und WebKit
 
 ## Ziel
@@ -63,6 +63,7 @@ v18 macht aus Modelltext verlässliche, native Chat-Inhalte. Tabellen, Charts, F
 - Bei exakt 0 % und Blur 0 ist der Fensterhintergrund vollständig transparent; Chat-Bubbles, Eingabe, Fehlerkarten, Tabellen und Charts behalten eigene lesbare Materialflächen.
 - Einstellungen bieten eine Live-Vorschau und einen Reset ausschließlich auf die Standardwerte von Transparent Glass.
 - Es gibt keine dauerhaft laufende Designanimation und keine zeitgesteuerte Blur-Neuberechnung. „Transparenz reduzieren“ aktiviert einen soliden lesbaren Fallback; „Bewegung reduzieren“ unterbindet optionale Übergangsanimationen.
+- Im Transparent-Glass-KI-Chat entfällt die leere Startkarte vollständig. Header und Eingabe-Chrome bleiben ohne deckende Materialfläche; Schaltflächen verwenden weiterhin interaktives Liquid Glass und Text erhält einen leichten Kontrasthalo.
 
 ### Sparkle-Updates
 
@@ -72,11 +73,11 @@ v18 macht aus Modelltext verlässliche, native Chat-Inhalte. Tabellen, Charts, F
 - `start.command` bettet Sparkle unter `Contents/Frameworks` ein, ergänzt den passenden Runpath und verifiziert App, Framework, Updater und XPC-Dienste strikt.
 - Das lokal startbare App-Bundle wird außerhalb des FileProvider-verwalteten Dokumentordners unter `${TMPDIR%/}/AutonomousAIChat-v18-app-build` zusammengesetzt. So kann macOS keine Finder-Metadaten an signierte Sparkle-Unterkomponenten hängen.
 - `scripts/package_release.sh` erzeugt DMG, Sparkle-Update-ZIP und eine bereinigte Quell-ZIP.
-- Der signierte GitHub-Appcast und das v18.1.0-Release sind öffentlich. Feed, Archivlänge, Versionsdaten und EdDSA-Signatur wurden nach der Veröffentlichung zurückgelesen und validiert.
+- Der GitHub-Appcast wird für jedes Release neu erzeugt und mit Sparkle-EdDSA signiert. Feed, Archivlänge, Versionsdaten und Signatur werden nach jeder Veröffentlichung erneut zurückgelesen und validiert.
 
 ## Tests
 
-Das Swift-Testtarget `AutonomousAIChatTests` deckt 20 Fälle ab:
+Das Swift-Testtarget `AutonomousAIChatTests` deckt 21 Fälle ab:
 
 - gültige, offene, verschachtelte, falsche und verwaiste Farbtags
 - unbekannte Tags und Absatzgrenzen
@@ -94,6 +95,7 @@ Das Swift-Testtarget `AutonomousAIChatTests` deckt 20 Fälle ab:
 - HTTPS-Updatefeed und Länge des eingebetteten Ed25519-Public-Keys
 - Standardwert und dauerhafte Auswahl beider Design-Modi
 - Reset und Grenzwertbereinigung für Transparent-Glass-Deckkraft und Blur
+- leere KI-Chat-Startkarte nur im Transparent-Glass-Modus ausblenden, ohne Gruppe oder aktuelles Design zu verändern
 
 Veröffentlichungsbefehle:
 

@@ -42,6 +42,21 @@ final class RichContentTests: XCTestCase {
         XCTAssertEqual(preferences.transparentBackgroundBlur, DesignDefaults.transparentBackgroundBlur)
     }
 
+    func testTransparentGlassHidesOnlyTheEmptySingleChatPlaceholder() {
+        XCTAssertFalse(EmptyConversationPolicy.shouldShowPlaceholder(
+            chatMode: .single,
+            designMode: .transparentGlass
+        ))
+        XCTAssertTrue(EmptyConversationPolicy.shouldShowPlaceholder(
+            chatMode: .group,
+            designMode: .transparentGlass
+        ))
+        XCTAssertTrue(EmptyConversationPolicy.shouldShowPlaceholder(
+            chatMode: .single,
+            designMode: .current
+        ))
+    }
+
     func testSparkleUpdateChannelUsesHTTPSAndValidEd25519PublicKey() throws {
         XCTAssertEqual(UpdateChannelPolicy.feedURL.scheme, "https")
         XCTAssertEqual(UpdateChannelPolicy.feedURL.lastPathComponent, "appcast.xml")

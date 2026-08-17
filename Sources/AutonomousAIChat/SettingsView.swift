@@ -1305,6 +1305,21 @@ private struct DesignModePreview: View {
                 }
                 .padding(8)
                 .transparentGlassReadabilityPanel(cornerRadius: 10)
+
+                previewComposerSurface {
+                    HStack(spacing: 6) {
+                        Text("Nachricht schreiben…")
+                            .font(.system(size: 10.5))
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Image(systemName: "arrow.up")
+                            .font(.system(size: 9, weight: .bold))
+                            .frame(width: 22, height: 22)
+                            .adaptiveGlass(in: Circle(), tint: tint.opacity(0.18), interactive: true)
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                }
             }
             .padding(14)
         }
@@ -1312,6 +1327,22 @@ private struct DesignModePreview: View {
         .overlay {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .stroke(.white.opacity(0.20), lineWidth: 0.8)
+        }
+    }
+
+    @ViewBuilder
+    private func previewComposerSurface<Content: View>(
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        let shape = RoundedRectangle(cornerRadius: 12, style: .continuous)
+        if mode == .transparentGlass && !reduceTransparency {
+            content()
+                .background(Color.clear, in: shape)
+                .overlay(shape.stroke(.white.opacity(0.22), lineWidth: 0.8))
+                .transparentGlassContrastHalo()
+        } else {
+            content()
+                .adaptiveGlass(in: shape, tint: .white.opacity(0.028))
         }
     }
 

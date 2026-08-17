@@ -23,12 +23,11 @@ struct ContentView: View {
 
             VStack(spacing: 0) {
                 header
-                    .transparentGlassReadabilityPanel(cornerRadius: 0)
+                    .transparentGlassContrastHalo()
                 Divider().opacity(0.16)
                 conversation
                 issueArea
                 composer
-                    .transparentGlassReadabilityPanel(cornerRadius: 0)
             }
         }
         .environment(\.transparentGlassModeEnabled, preferences.designMode == .transparentGlass)
@@ -270,7 +269,11 @@ struct ContentView: View {
                             )
                         }
 
-                        if viewModel.messages.isEmpty {
+                        if viewModel.messages.isEmpty,
+                           EmptyConversationPolicy.shouldShowPlaceholder(
+                               chatMode: preferences.chatMode,
+                               designMode: preferences.designMode
+                           ) {
                             EmptyConversationView(mode: preferences.chatMode, aiName: preferences.chatDisplayName(for: .alice))
                                 .transparentGlassReadabilityPanel(cornerRadius: 20)
                                 .padding(.top, 70)
@@ -463,39 +466,62 @@ struct ContentView: View {
         VStack(spacing: 0) {
             Divider().opacity(0.10)
 
-            HStack(spacing: 10) {
-                TextField(preferences.chatMode == .group ? "Nachricht an die Gruppe…" : "Nachricht schreiben…", text: $draft, axis: .vertical)
-                    .textFieldStyle(.plain)
-                    .font(.system(size: 14.5))
-                    .lineLimit(1...4)
-                    .padding(.leading, 16)
-                    .padding(.vertical, 12)
-                    .onSubmit(send)
+            composerInputSurface {
+                HStack(spacing: 10) {
+                    TextField(preferences.chatMode == .group ? "Nachricht an die Gruppe…" : "Nachricht schreiben…", text: $draft, axis: .vertical)
+                        .textFieldStyle(.plain)
+                        .font(.system(size: 14.5))
+                        .lineLimit(1...4)
+                        .padding(.leading, 16)
+                        .padding(.vertical, 12)
+                        .onSubmit(send)
 
-                Button(action: send) {
-                    Image(systemName: "arrow.up")
-                        .font(.system(size: 14, weight: .bold))
-                        .frame(width: 34, height: 34)
+                    Button(action: send) {
+                        Image(systemName: "arrow.up")
+                            .font(.system(size: 14, weight: .bold))
+                            .frame(width: 34, height: 34)
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? .secondary : .primary)
+                    .adaptiveGlass(
+                        in: Circle(),
+                        tint: draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                            ? Color.white.opacity(0.025)
+                            : preferences.tintColor.opacity(0.20),
+                        interactive: true
+                    )
+                    .disabled(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
-                .buttonStyle(.plain)
-                .foregroundStyle(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? .secondary : .primary)
-                .adaptiveGlass(
-                    in: Circle(),
-                    tint: draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                        ? Color.white.opacity(0.025)
-                        : preferences.tintColor.opacity(0.20),
-                    interactive: true
-                )
-                .disabled(draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .padding(7)
             }
-            .padding(7)
-            .adaptiveGlass(in: RoundedRectangle(cornerRadius: 24, style: .continuous), tint: .white.opacity(0.028))
             .shadow(color: .black.opacity(0.050), radius: 13, y: 4)
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
         }
         .frame(maxWidth: .infinity)
-        .background(.white.opacity(0.050))
+        .background {
+            if preferences.designMode == .current || reduceTransparency {
+                Color.white.opacity(0.050)
+            } else {
+                Color.clear
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func composerInputSurface<Content: View>(
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        let shape = RoundedRectangle(cornerRadius: 24, style: .continuous)
+        if preferences.designMode == .transparentGlass && !reduceTransparency {
+            content()
+                .background(Color.clear, in: shape)
+                .overlay(shape.stroke(.white.opacity(0.18), lineWidth: 0.8))
+                .transparentGlassContrastHalo()
+        } else {
+            content()
+                .adaptiveGlass(in: shape, tint: .white.opacity(0.028))
+        }
     }
 
     private var headerSubtitle: String {

@@ -51,9 +51,9 @@ cat > "$ASSEMBLED_APP_PATH/Contents/Info.plist" <<'PLIST'
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>18.1.0</string>
+    <string>18.1.1</string>
     <key>CFBundleVersion</key>
-    <string>22</string>
+    <string>23</string>
     <key>LSMinimumSystemVersion</key>
     <string>14.0</string>
     <key>NSHighResolutionCapable</key>
