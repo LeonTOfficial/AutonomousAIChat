@@ -49,7 +49,7 @@ rsync -a \
   --exclude '.swiftpm' \
   --exclude '.DS_Store' \
   "$PROJECT_DIR/" "$STAGING_DIR/source/AutonomousAIChat-v18/"
-ditto -c -k --sequesterRsrc --keepParent \
+ditto -c -k --norsrc --keepParent \
   "$STAGING_DIR/source/AutonomousAIChat-v18" "$SOURCE_ZIP_PATH"
 
 hdiutil verify "$DMG_PATH"
