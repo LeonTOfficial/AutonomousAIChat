@@ -8,7 +8,12 @@ Der Feed zeigt auf:
 
 `https://raw.githubusercontent.com/LeonTOfficial/AutonomousAIChat/main/appcast.xml`
 
-Das zugehörige öffentliche Repository und der Appcast sind noch nicht veröffentlicht. Ohne diesen bewusst ausstehenden externen Schritt meldet eine manuelle Updateprüfung einen nicht erreichbaren Feed.
+Repository, Appcast und v18.1.0-Release sind öffentlich unter:
+
+- `https://github.com/LeonTOfficial/AutonomousAIChat`
+- `https://github.com/LeonTOfficial/AutonomousAIChat/releases/tag/v18.1.0`
+
+Der Appcast wurde mit Sparkles offiziellem Werkzeug erzeugt. Öffentlicher Schlüssel, Archivlänge, Version, Download-URL und EdDSA-Signatur wurden vor und nach der Veröffentlichung geprüft.
 
 ## Sicherheitsregeln
 
@@ -16,7 +21,7 @@ Das zugehörige öffentliche Repository und der Appcast sind noch nicht veröffe
 - Private Schlüssel, API-Keys, Sitzungsdaten, Diagnose-Logs und Build-Caches dürfen nie in Repository, ZIP, DMG oder Appcast gelangen.
 - Release-Artefakte werden erst veröffentlicht, nachdem App-Bundle, Signatur, Archiv und Appcast lokal geprüft wurden.
 - Das Sparkle-Archiv wird mit `generate_appcast` beziehungsweise `sign_update` aus der offiziellen Sparkle-Distribution signiert. Die Signatur wird nicht von Hand erfunden oder kopiert.
-- Veröffentlichung, Git-Push, Tag oder GitHub-Release erfolgen erst nach ausdrücklicher Freigabe des Besitzers.
+- Veröffentlichung, Git-Push, Tag oder GitHub-Release erfolgen nur nach ausdrücklicher Freigabe des Besitzers. Für v18.1.0 wurde diese Freigabe erteilt.
 
 ## Lokale Vorbereitung
 

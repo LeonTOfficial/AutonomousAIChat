@@ -29,7 +29,7 @@ Native macOS-SwiftUI-App mit zwei getrennten Modi:
 
 Diese Version ist die erste Ausgabe mit eingebautem Sparkle. Sie muss daher noch einmal manuell per DMG installiert werden. Ab der darauffolgenden veröffentlichten Version kann die App Updates selbst laden und installieren.
 
-Der Feed ist `https://raw.githubusercontent.com/LeonTOfficial/AutonomousAIChat/main/appcast.xml`. Private Signierschlüssel gehören ausschließlich in den macOS-Schlüsselbund und niemals in dieses Projekt oder eine ZIP-Datei. Der genaue Release-Ablauf steht in `UPDATE-RELEASE.md`.
+Der veröffentlichte Feed ist `https://raw.githubusercontent.com/LeonTOfficial/AutonomousAIChat/main/appcast.xml`; Downloads und Versionshinweise stehen unter [GitHub Releases](https://github.com/LeonTOfficial/AutonomousAIChat/releases). Private Signierschlüssel gehören ausschließlich in den macOS-Schlüsselbund und niemals in dieses Projekt oder eine ZIP-Datei. Der genaue Release-Ablauf steht in `UPDATE-RELEASE.md`.
 
 ## Internetzugriff
 

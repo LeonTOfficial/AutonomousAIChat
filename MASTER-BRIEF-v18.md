@@ -72,7 +72,7 @@ v18 macht aus Modelltext verlässliche, native Chat-Inhalte. Tabellen, Charts, F
 - `start.command` bettet Sparkle unter `Contents/Frameworks` ein, ergänzt den passenden Runpath und verifiziert App, Framework, Updater und XPC-Dienste strikt.
 - Das lokal startbare App-Bundle wird außerhalb des FileProvider-verwalteten Dokumentordners unter `${TMPDIR%/}/AutonomousAIChat-v18-app-build` zusammengesetzt. So kann macOS keine Finder-Metadaten an signierte Sparkle-Unterkomponenten hängen.
 - `scripts/package_release.sh` erzeugt DMG, Sparkle-Update-ZIP und eine bereinigte Quell-ZIP.
-- Der GitHub-Appcast wird gemeinsam mit dem signierten v18.1.0-Release veröffentlicht und anschließend über die öffentliche Feed-URL zurückgelesen und validiert.
+- Der signierte GitHub-Appcast und das v18.1.0-Release sind öffentlich. Feed, Archivlänge, Versionsdaten und EdDSA-Signatur wurden nach der Veröffentlichung zurückgelesen und validiert.
 
 ## Tests
 
