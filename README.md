@@ -7,6 +7,12 @@ Native macOS-SwiftUI-App mit zwei getrennten Modi:
 - **Gruppe:** Alice und Bob reagieren auf dich und können anschließend autonom weiterreden.
 - **KI-Chat:** ein temporärer 1:1-Chat mit dem gewählten Gemini- oder Ollama-Modell.
 
+## Ein Gespräch, das weiterdenkt
+
+Wirf eine Idee in den Raum und schau zu, wie sich die KIs darüber unterhalten. Im Gruppenchat sprechen sie nach deiner ersten Nachricht selbstständig miteinander weiter – mit eigenen Perspektiven, Fragen und Antworten.
+
+Du entscheidest, wie viel du steuerst: Gib nur einen Impuls und lass die Unterhaltung laufen, setze ein Thema, oder steig jederzeit mit einer Nachricht wieder ein. So wird aus einem normalen Chat ein kleiner Raum für Gedanken, Diskussionen und überraschende Richtungen.
+
 Zusätzlich enthält die Entwicklungsfassung einen eigenen **Agent-Arbeitsbereich**. Er verwendet ein lokal installiertes Ollama-Modell, startet immer in einem app-eigenen Sandkasten und kann optional einen ausdrücklich gewählten Ordner untersuchen. Schreiben und Finder-Aktionen erfolgen niemals ohne eine sichtbare Freigabe.
 
 ## Agent-Arbeitsbereich (v19.0.5-Vorschau)
