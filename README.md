@@ -33,6 +33,18 @@ Die Kopfzeile bleibt dabei bewusst schlicht: ein kompakter Umschalter für Chat,
 
 Beispiel: „Erstelle `Geschichte.txt` mit einer kurzen Geschichte und zeige die Datei danach im Finder.“ Der lokale Agent bereitet den Inhalt vor; erst nach der Freigabe wird die Datei geschrieben und im Finder markiert.
 
+## Screenshots
+
+Die folgenden Ansichten zeigen den Agentenbereich der Beta mit neutralen Beispieldaten.
+
+### Sicherer Start im Sandkasten
+
+![Agent startet mit begrenztem Arbeitsbereich](Assets/screenshots/agent-sandbox.png)
+
+### Bereit für eine Aufgabe
+
+![Agent-Arbeitsbereich mit Freigabe-Hinweis](Assets/screenshots/agent-ready.png)
+
 ## Neu in v18
 
 - **Colored Text Parser 2.0:** tolerante Farben, deutsche Aliase, Markierungen, Verschachtelung und automatische Bereinigung fehlerhafter Tags.
