@@ -1,9 +1,31 @@
-# AutonomousAIChat v18.1.1
+# AutonomousAIChat
+
+![Illustration des autonomen KI-Gruppenchats](Assets/social-preview.png)
 
 Native macOS-SwiftUI-App mit zwei getrennten Modi:
 
 - **Gruppe:** Alice und Bob reagieren auf dich und können anschließend autonom weiterreden.
 - **KI-Chat:** ein temporärer 1:1-Chat mit dem gewählten Gemini- oder Ollama-Modell.
+
+Zusätzlich enthält die Entwicklungsfassung einen eigenen **Agent-Arbeitsbereich**. Er verwendet ein lokal installiertes Ollama-Modell, startet immer in einem app-eigenen Sandkasten und kann optional einen ausdrücklich gewählten Ordner untersuchen. Schreiben und Finder-Aktionen erfolgen niemals ohne eine sichtbare Freigabe.
+
+## Agent-Arbeitsbereich (v19.0.5-Vorschau)
+
+- Umschalten über „Chat | Agent | Gruppe“ direkt im Hauptfenster; „Chat“ öffnet den 1:1-Chat und „Gruppe“ den autonomen Gruppenchat.
+- Ein Zahnrad oben rechts öffnet die vorhandenen Einstellungen in jedem Bereich.
+- Der Agent startet ohne Einrichtung in seinem lokalen `Agent-Sandkasten`. Ein externer Arbeitsordner kann weiterhin ausschließlich über den nativen macOS-Ordnerdialog gewählt werden.
+- Unter **Einstellungen → KI → Agent – Modell** ist der Anbieter pro Agentenlauf auswählbar: lokal **Ollama** oder **Gemini**. Das jeweilige Modell wird direkt darunter gewählt; Gemini verwendet den bereits in den Einstellungen hinterlegten API-Key.
+- Eingaben und direkte Agentenantworten erscheinen als Gesprächsbubbles im Agentenbereich. Ein abgebrochener oder zu langsamer Lauf bleibt als verständliche Statusmeldung mit „Erneut versuchen“ sichtbar, statt dass die Anfrage lautlos verschwindet.
+- Typisierte Werkzeuge für Ordnerlisten, UTF-8-Textdateien, Schreibvorschläge und „Im Finder zeigen“; kein allgemeines Shell- oder Terminalwerkzeug.
+- Kanonische Pfadprüfung blockiert absolute Pfade, `..`, versteckte/sensible Pfade und Symlinks aus dem Arbeitsordner heraus.
+- Schreibvorschläge zeigen Ziel, Begründung und vollständigen Inhalt. Erst „Schreiben freigeben“ führt die atomische Änderung aus.
+- Eine Datei wird nicht überschrieben, wenn sie seit der Vorschau extern verändert wurde.
+- Live-Plan, Aktivitätskarten, nachgewiesene Werkzeugresultate, Fehlerstatus und Stop-Schaltfläche statt nicht überprüfbarer Modellbehauptungen.
+- Begrenzte Modellschritte, Ausgabelimits, ein Abbruchknopf und längere, harte Netzwerk-Timeouts verhindern Endlosschleifen und blockierende Agentenläufe.
+
+Die Kopfzeile bleibt dabei bewusst schlicht: ein kompakter Umschalter für Chat, Agent und Gruppe, ein gemeinsames Aktionsmenü sowie ein Zahnrad für die Einstellungen.
+
+Beispiel: „Erstelle `Geschichte.txt` mit einer kurzen Geschichte und zeige die Datei danach im Finder.“ Der lokale Agent bereitet den Inhalt vor; erst nach der Freigabe wird die Datei geschrieben und im Finder markiert.
 
 ## Neu in v18
 
@@ -17,6 +39,7 @@ Native macOS-SwiftUI-App mit zwei getrennten Modi:
 - **Kompakte Fehlerkarte:** Kurztext, Details, Wiederholen und Schließen. Nach einem Fehler pausiert die autonome Schleife.
 - **Modellberatung:** Qwen 3.5 9B ist der Standard für einen 16-GB-Mac. Qwen 3.5 35B bleibt auswählbar, wird wegen seines Speicherbedarfs aber rot gewarnt.
 - **Sichere Migration:** bestehende `sessions-v13.json` bleiben lesbar; vor dem ersten v18-Schreiben wird einmalig `sessions-v13.pre-v18.json` angelegt.
+- **Sitzungswiederherstellung:** Vor jedem neuen Speichern wird die zuletzt gültige Sitzungsdatei atomisch als `sessions-v13.last-good.json` gesichert. Eine beschädigte Hauptdatei fällt beim nächsten Start auf diese Sicherung zurück.
 - **Stabilitätsfix 18.0.1:** Qwen-Denkmodus blockiert die sichtbare Antwort nicht mehr; Chat-Bubbles passen sich wieder dem Inhalt an und eine dauerhaft laufende SwiftUI-Animationsschleife wurde entfernt.
 - **Resilienzfix 18.0.2:** Abgebrochene Antworten hinterlassen keinen blockierenden Zustand mehr; Streaming und Scrollen werden gedrosselt, Rich-Inhalte gecacht und lokale Modellanfragen erhalten klare Zeit- und Kontextgrenzen. Unvollständige JSON-Hüllen gelangen nicht mehr in die Bubble; dynamische Nachrichten verwenden eine stabile Liquid-Glass-nahe Materialfläche.
 - **Sparkle-Updates:** Seit v18.1.0 enthält die App Sparkle 2.9.2, prüft einmal täglich auf signierte Updates und bietet „Nach Updates suchen …“ im App-Menü sowie in den Einstellungen. Das geprüfte Framework wird lokal mitgeliefert, damit der Build nicht von einem erneuten Download abhängt.

@@ -2,6 +2,90 @@ import XCTest
 @testable import AutonomousAIChat
 
 final class RichContentTests: XCTestCase {
+    func testAgentRejectsTraversalAbsoluteAndSensitivePaths() throws {
+        XCTAssertThrowsError(try AgentWorkspaceFileSystem.validatedRelativePath("../secret.txt"))
+        XCTAssertThrowsError(try AgentWorkspaceFileSystem.validatedRelativePath("/tmp/secret.txt"))
+        XCTAssertThrowsError(try AgentWorkspaceFileSystem.validatedRelativePath(".env"))
+        XCTAssertThrowsError(try AgentWorkspaceFileSystem.validatedRelativePath("notes/.ssh/key"))
+        XCTAssertEqual(
+            try AgentWorkspaceFileSystem.validatedRelativePath("Geschichten/abend.txt"),
+            "Geschichten/abend.txt"
+        )
+    }
+
+    func testAgentWriteNeedsCommitAndCreatesFileAtomically() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+
+        let fileSystem = AgentWorkspaceFileSystem(root: root)
+        let action = try await fileSystem.prepareWrite(
+            relativePath: "Geschichten/kurz.txt",
+            content: "Es war einmal.",
+            reason: "Test",
+            revealAfterWrite: false
+        )
+        XCTAssertFalse(FileManager.default.fileExists(atPath: action.targetURL.path))
+
+        let writtenURL = try await fileSystem.commit(action)
+        XCTAssertEqual(try String(contentsOf: writtenURL, encoding: .utf8), "Es war einmal.")
+    }
+
+    func testAgentWriteStopsOnConcurrentChange() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let target = root.appendingPathComponent("notiz.txt")
+        try "Alt".write(to: target, atomically: true, encoding: .utf8)
+
+        let fileSystem = AgentWorkspaceFileSystem(root: root)
+        let action = try await fileSystem.prepareWrite(
+            relativePath: "notiz.txt",
+            content: "Neu",
+            reason: "Test",
+            revealAfterWrite: false
+        )
+        try "Änderung des Nutzers".write(to: target, atomically: true, encoding: .utf8)
+
+        do {
+            _ = try await fileSystem.commit(action)
+            XCTFail("Konflikt muss das Schreiben verhindern")
+        } catch let error as AgentFileSystemError {
+            XCTAssertEqual(error, .conflict)
+        }
+        XCTAssertEqual(try String(contentsOf: target, encoding: .utf8), "Änderung des Nutzers")
+    }
+
+    func testAgentBlocksSymlinkEscape() async throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let outside = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: outside, withIntermediateDirectories: true)
+        defer {
+            try? FileManager.default.removeItem(at: root)
+            try? FileManager.default.removeItem(at: outside)
+        }
+        let outsideFile = outside.appendingPathComponent("secret.txt")
+        try "privat".write(to: outsideFile, atomically: true, encoding: .utf8)
+        try FileManager.default.createSymbolicLink(
+            at: root.appendingPathComponent("link.txt"),
+            withDestinationURL: outsideFile
+        )
+
+        let fileSystem = AgentWorkspaceFileSystem(root: root)
+        do {
+            _ = try await fileSystem.readFile(relativePath: "link.txt")
+            XCTFail("Symlink-Flucht muss blockiert werden")
+        } catch let error as AgentFileSystemError {
+            XCTAssertEqual(error, .pathOutsideWorkspace)
+        }
+    }
+
+    func testFileTasksCannotBeReportedCompleteWithoutToolEvidence() {
+        XCTAssertTrue(AgentTaskPolicy.requiresFileTool("Erstelle eine Datei und öffne sie im Finder"))
+        XCTAssertTrue(AgentTaskPolicy.requiresFileTool("Schreibe eine kurze Geschichte in notiz.txt"))
+        XCTAssertFalse(AgentTaskPolicy.requiresFileTool("Erkläre mir kurz, was ein Agent ist"))
+    }
     @MainActor
     func testDesignModesPersistWithoutChangingCurrentDesignDefaults() throws {
         let suiteName = "AutonomousAIChatTests.Design.\(UUID().uuidString)"

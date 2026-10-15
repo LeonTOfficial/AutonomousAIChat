@@ -307,6 +307,36 @@ struct SettingsView: View {
                 }
             }
 
+            Section("Agent – Modell") {
+                Picker("Anbieter", selection: $preferences.agentProvider) {
+                    Text("Gemini").tag(AIProvider.gemini)
+                    Text("Ollama").tag(AIProvider.ollama)
+                }
+                .pickerStyle(.segmented)
+
+                if preferences.agentProvider == .gemini {
+                    Picker("Gemini-Modell", selection: $preferences.agentGeminiModel) {
+                        ForEach(geminiModels, id: \.self) { model in
+                            Text(model).tag(model)
+                        }
+                    }
+                    Text(geminiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                         ? "Für Gemini wird der oben gespeicherte API-Key benötigt."
+                         : "Gemini arbeitet mit denselben begrenzten Dateiwerkzeugen und Freigaben wie Ollama.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                } else {
+                    ollamaPicker(binding: $preferences.agentOllamaModel)
+                    Text("Lokale Modelle können bei längeren Texten etwas mehr Zeit brauchen. Die Agentenansicht bleibt dabei ansprechbar und zeigt den Fortschritt.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Text("AKTIV · \(preferences.agentProvider.displayName) · \(preferences.agentProvider == .gemini ? preferences.agentGeminiModel : preferences.agentOllamaModel)")
+                    .font(.caption.monospaced())
+                    .foregroundStyle(.secondary)
+            }
+
             Section("Fallback & Limit-Schutz") {
                 Toggle("Bei Gemini-Limit automatisch auf Ollama wechseln", isOn: $preferences.autoFallbackToOllama)
                 Toggle("Zusätzlichen App-Limit-Schutz verwenden", isOn: $preferences.limitProtectionEnabled)

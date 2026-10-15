@@ -4,14 +4,25 @@ enum ConversationStore {
     private static let folderName = "AutonomousAIChat"
     private static let sessionsFileName = "sessions-v13.json"
     private static let preV18BackupFileName = "sessions-v13.pre-v18.json"
+    private static let lastGoodBackupFileName = "sessions-v13.last-good.json"
     private static let memoryFileName = "long-term-memory.txt"
 
     static func loadSessions() -> PersistedSessionStore? {
-        if let url = try? sessionsFileURL(),
-           let data = try? Data(contentsOf: url),
-           let decoded = try? JSONDecoder().decode(PersistedSessionStore.self, from: data),
-           !decoded.sessions.isEmpty {
-            return decoded
+        if let url = try? sessionsFileURL() {
+            if let decoded = loadStore(from: url) {
+                return decoded
+            }
+
+            // Ein abgebrochener Systemstart oder beschädigter Datenträgerzustand darf
+            // die App nicht mit einem leeren Chat starten lassen. Die vor v18 angelegte
+            // Sicherung ist ein sicherer, unveränderter Fallback.
+            let folder = url.deletingLastPathComponent()
+            for backupName in [lastGoodBackupFileName, preV18BackupFileName] {
+                let backupURL = folder.appendingPathComponent(backupName, isDirectory: false)
+                if let decoded = loadStore(from: backupURL) {
+                    return decoded
+                }
+            }
         }
 
         if let legacy = loadLegacyConversation(), !legacy.messages.isEmpty {
@@ -30,9 +41,24 @@ enum ConversationStore {
         return nil
     }
 
+    private static func loadStore(from url: URL) -> PersistedSessionStore? {
+        guard let values = try? url.resourceValues(forKeys: [.isRegularFileKey, .fileSizeKey]),
+              values.isRegularFile == true,
+              let size = values.fileSize,
+              size > 0,
+              size <= 32 * 1024 * 1024,
+              let data = try? Data(contentsOf: url, options: [.mappedIfSafe]),
+              let decoded = try? JSONDecoder().decode(PersistedSessionStore.self, from: data),
+              !decoded.sessions.isEmpty else {
+            return nil
+        }
+        return decoded
+    }
+
     static func saveSessions(_ store: PersistedSessionStore) {
         guard let url = try? sessionsFileURL() else { return }
         createPreV18BackupIfNeeded(currentURL: url)
+        createLastGoodBackupIfPossible(currentURL: url)
 
         let normalizedSessions = store.sessions.map { session -> ChatSession in
             var copy = session
@@ -110,6 +136,16 @@ enum ConversationStore {
         let backupURL = folder.appendingPathComponent(preV18BackupFileName, isDirectory: false)
         guard !manager.fileExists(atPath: backupURL.path) else { return }
         try? manager.copyItem(at: currentURL, to: backupURL)
+    }
+
+    private static func createLastGoodBackupIfPossible(currentURL: URL) {
+        guard loadStore(from: currentURL) != nil,
+              let data = try? Data(contentsOf: currentURL, options: [.mappedIfSafe]),
+              let folder = try? supportFolderURL() else {
+            return
+        }
+        let backupURL = folder.appendingPathComponent(lastGoodBackupFileName, isDirectory: false)
+        try? data.write(to: backupURL, options: [.atomic])
     }
 
     private static func titleForLegacyConversation(_ messages: [ChatMessage]) -> String {

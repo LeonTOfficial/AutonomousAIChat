@@ -320,6 +320,9 @@ final class Preferences: ObservableObject {
         static let bobGeminiModel = "bobGeminiModelV13"
         static let aliceOllamaModel = "aliceOllamaModelV13"
         static let bobOllamaModel = "bobOllamaModelV13"
+        static let agentProvider = "agentProviderV19"
+        static let agentGeminiModel = "agentGeminiModelV19"
+        static let agentOllamaModel = "agentOllamaModelV19"
 
         static let chatMode = "chatModeV14"
         static let showMessageCount = "showMessageCount"
@@ -365,6 +368,9 @@ final class Preferences: ObservableObject {
     @Published var bobGeminiModel: String { didSet { save(Keys.bobGeminiModel, bobGeminiModel) } }
     @Published var aliceOllamaModel: String { didSet { save(Keys.aliceOllamaModel, aliceOllamaModel) } }
     @Published var bobOllamaModel: String { didSet { save(Keys.bobOllamaModel, bobOllamaModel) } }
+    @Published var agentProvider: AIProvider { didSet { save(Keys.agentProvider, agentProvider.rawValue) } }
+    @Published var agentGeminiModel: String { didSet { save(Keys.agentGeminiModel, agentGeminiModel) } }
+    @Published var agentOllamaModel: String { didSet { save(Keys.agentOllamaModel, agentOllamaModel) } }
 
     @Published var chatMode: ChatMode { didSet { save(Keys.chatMode, chatMode.rawValue) } }
     @Published var showMessageCount: Bool { didSet { save(Keys.showMessageCount, showMessageCount) } }
@@ -428,6 +434,10 @@ final class Preferences: ObservableObject {
             bobOllamaModel = legacyOllama
             defaults.set(true, forKey: Keys.participantMigrationV13)
         }
+
+        agentProvider = AIProvider(rawValue: defaults.string(forKey: Keys.agentProvider) ?? "") ?? .ollama
+        agentGeminiModel = defaults.string(forKey: Keys.agentGeminiModel) ?? legacyGemini
+        agentOllamaModel = defaults.string(forKey: Keys.agentOllamaModel) ?? "qwen3.5:9b"
 
         chatMode = ChatMode(rawValue: defaults.string(forKey: Keys.chatMode) ?? "") ?? .group
 
@@ -503,6 +513,9 @@ final class Preferences: ObservableObject {
         }
         if bobOllamaModel.lowercased().contains(":cloud") {
             bobOllamaModel = ""
+        }
+        if agentOllamaModel.lowercased().contains(":cloud") {
+            agentOllamaModel = "qwen3.5:9b"
         }
 
         isLoading = false

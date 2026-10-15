@@ -8,12 +8,14 @@ struct ContentView: View {
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    @StateObject private var agentViewModel = AgentViewModel()
+
     @State private var draft = ""
+    @State private var workspaceMode: MainWorkspaceMode = .chat
     @State private var showParticipants = false
     @State private var showTopicEditor = false
     @State private var isAtBottom = true
     @State private var newestMessageScrollRequest = 0
-    @State private var isHoveringNewChat = false
     @State private var showIssueDetails = false
     @State private var pendingScrollTask: Task<Void, Never>?
 
@@ -21,13 +23,18 @@ struct ContentView: View {
         ZStack {
             background
 
-            VStack(spacing: 0) {
-                header
-                    .transparentGlassContrastHalo()
-                Divider().opacity(0.16)
-                conversation
-                issueArea
-                composer
+            if workspaceMode != .agent {
+                VStack(spacing: 0) {
+                    header
+                        .transparentGlassContrastHalo()
+                    Divider().opacity(0.16)
+                    conversation
+                    issueArea
+                    composer
+                }
+            } else {
+                AgentWorkspaceView(workspaceMode: $workspaceMode, agent: agentViewModel)
+                    .environmentObject(preferences)
             }
         }
         .environment(\.transparentGlassModeEnabled, preferences.designMode == .transparentGlass)
@@ -40,24 +47,47 @@ struct ContentView: View {
                 .padding(14)
         }
         .onAppear {
-            if preferences.chatMode == .single {
-                viewModel.startFreshSingleChat()
-            } else {
-                viewModel.start()
+            workspaceMode = preferences.chatMode == .group ? .group : .chat
+            if workspaceMode != .agent {
+                if preferences.chatMode == .single {
+                    viewModel.startFreshSingleChat()
+                } else {
+                    viewModel.start()
+                }
             }
             newestMessageScrollRequest &+= 1
+        }
+        .onChange(of: workspaceMode) { _, mode in
+            switch mode {
+            case .agent:
+                viewModel.stop()
+            case .chat:
+                agentViewModel.cancel()
+                viewModel.setChatMode(.single)
+                newestMessageScrollRequest &+= 1
+            case .group:
+                agentViewModel.cancel()
+                viewModel.setChatMode(.group)
+                newestMessageScrollRequest &+= 1
+            }
+        }
+        .onChange(of: preferences.chatMode) { _, mode in
+            guard workspaceMode != .agent else { return }
+            workspaceMode = mode == .group ? .group : .chat
         }
         .onChange(of: scenePhase) { _, phase in
             if phase == .active {
                 viewModel.start()
                 newestMessageScrollRequest &+= 1
             } else if phase == .background {
+                agentViewModel.cancel()
                 viewModel.stop()
             }
         }
         .onDisappear {
             pendingScrollTask?.cancel()
             pendingScrollTask = nil
+            agentViewModel.cancel()
             viewModel.stop()
         }
     }
@@ -127,7 +157,7 @@ struct ContentView: View {
     }
 
     private var header: some View {
-        HStack(spacing: 14) {
+        HStack(spacing: 12) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(preferences.chatMode == .group ? "Autonomer KI-Gruppenchat" : "KI-Chat")
                     .font(.system(size: 16, weight: .semibold, design: .rounded))
@@ -137,7 +167,17 @@ struct ContentView: View {
                     .lineLimit(1)
             }
 
-            Spacer(minLength: 20)
+            Spacer(minLength: 16)
+
+            Picker("Bereich", selection: $workspaceMode) {
+                ForEach(MainWorkspaceMode.allCases) { mode in
+                    Text(mode.displayName).tag(mode)
+                }
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .controlSize(.small)
+            .frame(width: 190)
 
             if let speaker = viewModel.typingSpeaker {
                 HStack(spacing: 6) {
@@ -167,61 +207,7 @@ struct ContentView: View {
                 .transition(.opacity)
             }
 
-            if preferences.showMessageCount {
-                Text("\(viewModel.messages.count) Nachrichten")
-                    .font(.system(size: 12, weight: .medium))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 7)
-                    .adaptiveGlass(in: Capsule(), tint: .white.opacity(0.035))
-            }
-
-            if preferences.chatMode == .single {
-                Button {
-                    performAnimation(.easeOut(duration: 0.16)) {
-                        viewModel.startFreshSingleChat()
-                        draft = ""
-                        isAtBottom = true
-                        newestMessageScrollRequest &+= 1
-                    }
-                } label: {
-                    HStack(spacing: 6) {
-                        Image(systemName: "plus")
-                            .font(.system(size: 12.5, weight: .bold))
-                            .frame(width: 18, height: 18)
-
-                        if isHoveringNewChat {
-                            Text("Neuer Chat")
-                                .font(.system(size: 11.5, weight: .semibold))
-                                .lineLimit(1)
-                                .transition(.opacity.combined(with: .move(edge: .trailing)))
-                        }
-                    }
-                    .frame(width: isHoveringNewChat ? 104 : 34, height: 30)
-                    .contentShape(Capsule())
-                }
-                .buttonStyle(.plain)
-                .adaptiveGlass(in: Capsule(), tint: .white.opacity(0.055), interactive: true)
-                .onHover { hovering in
-                    performAnimation(.spring(response: 0.26, dampingFraction: 0.84)) {
-                        isHoveringNewChat = hovering
-                    }
-                }
-                .help("Leeren KI-Chat starten")
-            }
-
-            Button {
-                performAnimation(.spring(response: 0.32, dampingFraction: 0.86)) {
-                    showParticipants.toggle()
-                }
-            } label: {
-                Image(systemName: "person.2")
-                    .font(.system(size: 13, weight: .semibold))
-                    .frame(width: 34, height: 30)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .adaptiveGlass(in: Capsule(), tint: .white.opacity(0.055), interactive: true)
-            .help("Teilnehmer")
+            headerActions
             .popover(isPresented: $showParticipants, arrowEdge: .top) {
                 ParticipantsPopover(onEditTopic: {
                     showParticipants = false
@@ -244,6 +230,57 @@ struct ContentView: View {
         .padding(.trailing, 18)
         .padding(.vertical, 14)
         .frame(minHeight: 58)
+    }
+
+    private var headerActions: some View {
+        HStack(spacing: 1) {
+            Menu {
+                if preferences.chatMode == .single {
+                    Button("Neuer KI-Chat", systemImage: "plus") {
+                        performAnimation(.easeOut(duration: 0.16)) {
+                            viewModel.startFreshSingleChat()
+                            draft = ""
+                            isAtBottom = true
+                            newestMessageScrollRequest &+= 1
+                        }
+                    }
+                }
+
+                Button("Teilnehmer", systemImage: "person.2") {
+                    performAnimation(.spring(response: 0.32, dampingFraction: 0.86)) {
+                        showParticipants = true
+                    }
+                }
+
+                if preferences.showMessageCount {
+                    Divider()
+                    Text("\(viewModel.messages.count) Nachrichten")
+                }
+            } label: {
+                Image(systemName: "ellipsis")
+                    .font(.system(size: 13, weight: .semibold))
+                    .frame(width: 30, height: 30)
+                    .contentShape(Circle())
+            }
+            .menuStyle(.borderlessButton)
+            .help("Weitere Chat-Aktionen")
+
+            Divider()
+                .frame(height: 16)
+                .opacity(0.32)
+
+            SettingsLink {
+                Image(systemName: "gearshape")
+                    .font(.system(size: 13, weight: .semibold))
+                    .frame(width: 30, height: 30)
+                    .contentShape(Circle())
+            }
+            .buttonStyle(.plain)
+            .help("Einstellungen öffnen")
+        }
+        .padding(2)
+        .fixedSize(horizontal: true, vertical: false)
+        .adaptiveGlass(in: Capsule(), tint: .white.opacity(0.04), interactive: true)
     }
 
     private var conversation: some View {

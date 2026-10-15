@@ -7,7 +7,12 @@ struct AutonomousAIChatApp: App {
     private let appUpdater = AppUpdater.shared
 
     init() {
-        let preferences = Preferences()
+        // Die separat signierte Vorschau darf nicht schon beim Öffnen einen
+        // Schlüsselbunddialog auslösen. Ein Gemini-Schlüssel wird dort erst
+        // bei einer bewussten Gemini-Aktion (Einstellungen oder Anfrage)
+        // abgefragt. Die veröffentlichte App behält ihr bisheriges Verhalten.
+        let isAgentPreview = Bundle.main.bundleIdentifier == "com.leon.autonomous-ai-chat.agent-preview"
+        let preferences = Preferences(hasGeminiKeyOverride: isAgentPreview ? false : nil)
         _preferences = StateObject(wrappedValue: preferences)
         _viewModel = StateObject(wrappedValue: ChatViewModel(preferences: preferences))
     }

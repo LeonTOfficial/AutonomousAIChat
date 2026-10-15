@@ -85,7 +85,11 @@ final class ChatViewModel: ObservableObject {
         }
 
         loopTask = Task { [weak self] in
-            try? await Task.sleep(for: .seconds(1.2))
+            do {
+                try await Task.sleep(for: .seconds(1.2))
+            } catch {
+                return
+            }
 
             while !Task.isCancelled {
                 guard let self else { return }
@@ -107,7 +111,11 @@ final class ChatViewModel: ObservableObject {
                     }
                 }
 
-                try? await Task.sleep(for: .seconds(max(3.0, self.preferences.interval)))
+                do {
+                    try await Task.sleep(for: .seconds(max(3.0, self.preferences.interval)))
+                } catch {
+                    return
+                }
             }
         }
     }
@@ -305,14 +313,15 @@ final class ChatViewModel: ObservableObject {
     }
 
     func generateSingleStep() {
-        guard !isGenerating, pendingUserMessageID == nil else { return }
-        Task { [weak self] in
+        guard !isGenerating, pendingUserMessageID == nil, replyTask == nil else { return }
+        replyTask = Task { [weak self] in
             guard let self else { return }
             _ = await self.generateOne(
                 speaker: self.nextSpeaker(),
                 replyMode: .autonomous,
                 focusedUserMessageID: nil
             )
+            if !Task.isCancelled { self.replyTask = nil }
         }
     }
 
@@ -730,7 +739,11 @@ final class ChatViewModel: ObservableObject {
               preferences.autonomousEnabled,
               Double.random(in: 0...1) < snapshot.doubleTextChance else { return }
 
-        try? await Task.sleep(for: .milliseconds(Int.random(in: 650...1500)))
+        do {
+            try await Task.sleep(for: .milliseconds(Int.random(in: 650...1500)))
+        } catch {
+            return
+        }
         guard !Task.isCancelled,
               pendingUserMessageID == nil,
               !isGenerating,

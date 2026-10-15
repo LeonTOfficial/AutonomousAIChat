@@ -15,6 +15,13 @@ swift build -c release
 
 Abgedeckte Fälle:
 
+- Agent-Pfade blockieren absolute Pfade, Traversal und versteckte/sensible Komponenten
+- Symlinks dürfen nicht aus dem gewählten Agent-Arbeitsordner herausführen
+- Agent-Schreibvorschläge verändern vor der Freigabe keine Datei und schreiben danach atomisch
+- externe Dateiänderungen zwischen Vorschau und Freigabe lösen einen Konflikt aus statt Nutzerdaten zu überschreiben
+- Datei-Aufgaben dürfen ohne echten Werkzeugaufruf nicht als abgeschlossen gemeldet werden
+- beschädigte Sitzungsdaten können auf die letzte gültige atomische Sicherung zurückfallen
+
 - gültige, offene, verschachtelte, falsche und verwaiste Farbtags sowie unbekannte Tags
 - Standard-Markdown-Tabellen, einzeiliger Pipe-Text und normale Sätze mit Pipe-Zeichen
 - gültige und ungültige Chartdaten
@@ -59,6 +66,13 @@ Abgedeckte Fälle:
 25. Transparent Glass zurücksetzen und danach zu „Aktuelles Design“ wechseln; das bisherige Erscheinungsbild muss exakt wiederhergestellt werden.
 26. macOS „Transparenz reduzieren“ und „Bewegung reduzieren“ aktivieren und den soliden, ruhigen Fallback ohne dauerhafte Animation prüfen.
 27. In Transparent Glass einen leeren KI-Chat öffnen: keine Startkarte und kein erklärender Text; Header und Eingabebereich bleiben transparent, während Plus-, Personen- und Senden-Schaltflächen als Liquid Glass erkennbar sind.
+28. Im Hauptfenster zu „Agent“ wechseln; der Gruppenchat muss dabei pausieren und nach der Rückkehr zu „Chat“ normal weiterarbeiten.
+29. Einen Arbeitsordner über den nativen Dialog wählen, die App neu starten und prüfen, dass der Ordner sicher wiederhergestellt wird.
+30. „Erstelle Geschichte.txt mit einer kurzen Geschichte und zeige sie danach im Finder“ ausführen: Live-Plan und Tool-Aktivität erscheinen, vor der Freigabe existiert keine neue Datei.
+31. Schreibvorschau ablehnen: keine Datei wird verändert. Danach erneut starten und freigeben: Dateiinhalt stimmt und Finder markiert exakt diese Datei.
+32. Eine vorhandene Datei vorschlagen lassen, sie vor der Freigabe extern ändern und dann freigeben: Konflikthinweis statt Überschreiben.
+33. Agent mit `../`, absolutem Pfad, `.env` und einem nach außen führenden Symlink testen: jede Aktion wird sichtbar blockiert.
+34. Einen Agentenlauf während einer lokalen Modellantwort stoppen: keine spätere Tool-Aktion oder Änderung darf erscheinen.
 
 ## Veröffentlichung
 
